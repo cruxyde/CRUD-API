@@ -13,6 +13,8 @@ export interface UserAttributes {
   role: string;
   createdAt: Date;
   updatedAt: Date;
+  websiteUrl: String;
+
 }
 
 // Define optional attributes for creation
@@ -29,6 +31,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public role!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public websiteUrl!: String;
 }
 
 // Export the model initializer function
@@ -75,6 +78,11 @@ export default function (sequelize: Sequelize): typeof User {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      websiteUrl: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'https://example.com',
+      }
     },
     {
       sequelize,
