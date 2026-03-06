@@ -1,0 +1,35 @@
+{
+  "name": "typescript-crud-api",
+  "version": "1.0.0",
+  "description": "TypeScript CRUD API with Express, Sequelize, MySQL",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "start:dev": "nodemon --exec ts-node src/server.ts",
+    "test": "ts-node tests/users.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5",
+    "joi": "^17.13.0",
+    "rootpath": "^0.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "ts-node": "^10.9.2",
+    "@types/node": "^22.0.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "nodemon": "^3.1.0"
+  }
+}
