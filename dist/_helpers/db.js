@@ -53,7 +53,20 @@ async function initialize() {
     const sequelize = new sequelize_1.Sequelize(database, user, password, { dialect: 'mysql' });
     // Initialize models
     const { default: userModel } = await Promise.resolve().then(() => __importStar(require('../users/user.model')));
+    const { default: departmentModel } = await Promise.resolve().then(() => __importStar(require('../departments/department.model')));
+    const { default: employeeModel } = await Promise.resolve().then(() => __importStar(require('../employees/employee.model')));
+    const { default: requestModel } = await Promise.resolve().then(() => __importStar(require('../requests/request.model')));
     exports.db.User = userModel(sequelize);
+    exports.db.Department = departmentModel(sequelize);
+    exports.db.Employee = employeeModel(sequelize);
+    exports.db.Request = requestModel(sequelize);
+    // Relationships
+    exports.db.Department.hasMany(exports.db.Employee, { foreignKey: 'departmentId', as: 'employees' });
+    exports.db.Employee.belongsTo(exports.db.Department, { foreignKey: 'departmentId', as: 'department' });
+    exports.db.Department.hasMany(exports.db.Request, { foreignKey: 'departmentId', as: 'requests' });
+    exports.db.Request.belongsTo(exports.db.Department, { foreignKey: 'departmentId', as: 'department' });
+    exports.db.Employee.hasMany(exports.db.Request, { foreignKey: 'employeeId', as: 'requests' });
+    exports.db.Request.belongsTo(exports.db.Employee, { foreignKey: 'employeeId', as: 'employee' });
     // Sync models with database
     await sequelize.sync({ alter: true });
     console.log('✓ Database initialized and models synced');

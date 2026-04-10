@@ -1,45 +1,39 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.WorkRequest = void 0;
 exports.default = default_1;
-// src/users/user.model.ts
 const sequelize_1 = require("sequelize");
-// Define the Sequelize model class
-class User extends sequelize_1.Model {
+class WorkRequest extends sequelize_1.Model {
 }
-exports.User = User;
-// Export the model initializer function
+exports.WorkRequest = WorkRequest;
 function default_1(sequelize) {
-    User.init({
+    WorkRequest.init({
         id: {
             type: sequelize_1.DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        email: {
-            type: sequelize_1.DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        passwordHash: {
-            type: sequelize_1.DataTypes.STRING,
+        employeeId: {
+            type: sequelize_1.DataTypes.INTEGER,
             allowNull: false,
         },
-        title: {
-            type: sequelize_1.DataTypes.STRING,
+        departmentId: {
+            type: sequelize_1.DataTypes.INTEGER,
             allowNull: false,
         },
-        firstName: {
+        type: {
             type: sequelize_1.DataTypes.STRING,
             allowNull: false,
         },
-        lastName: {
+        description: {
             type: sequelize_1.DataTypes.STRING,
             allowNull: false,
+            defaultValue: '',
         },
-        role: {
+        status: {
             type: sequelize_1.DataTypes.STRING,
             allowNull: false,
+            defaultValue: 'pending',
         },
         createdAt: {
             type: sequelize_1.DataTypes.DATE,
@@ -51,24 +45,11 @@ function default_1(sequelize) {
             allowNull: false,
             defaultValue: sequelize_1.DataTypes.NOW,
         },
-        websiteUrl: {
-            type: sequelize_1.DataTypes.STRING,
-            allowNull: false,
-            defaultValue: 'https://example.com',
-        }
     }, {
         sequelize,
-        modelName: 'User',
-        tableName: 'users',
+        modelName: 'Request',
+        tableName: 'requests',
         timestamps: true,
-        defaultScope: {
-            attributes: { exclude: ['passwordHash'] },
-        },
-        scopes: {
-            withHash: {
-                attributes: { include: ['passwordHash'] },
-            },
-        },
     });
-    return User;
+    return WorkRequest;
 }

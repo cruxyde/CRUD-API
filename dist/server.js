@@ -9,12 +9,18 @@ const cors_1 = __importDefault(require("cors"));
 const errorHandler_1 = require("./_middleware/errorHandler");
 const db_1 = require("./_helpers/db");
 const users_controller_1 = __importDefault(require("./users/users.controller"));
+const departments_controller_1 = __importDefault(require("./departments/departments.controller"));
+const employees_controller_1 = __importDefault(require("./employees/employees.controller"));
+const requests_controller_1 = __importDefault(require("./requests/requests.controller"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)());
 // API routes
 app.use('/users', users_controller_1.default);
+app.use('/departments', departments_controller_1.default);
+app.use('/employees', employees_controller_1.default);
+app.use('/requests', requests_controller_1.default);
 // Global error handler (must be last)
 app.use(errorHandler_1.errorHandler);
 const PORT = process.env.PORT || 4000;
