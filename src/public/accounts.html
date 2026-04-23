@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accounts</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">Accounts</div>
+      <nav class="nav">
+        <a href="/adminDashboard.html">Dashboard</a>
+        <a class="active" href="/accounts.html">Accounts</a>
+        <a href="/AllRequestAdmin.html">Requests</a>
+      </nav>
+    </header>
+
+    <div class="toolbar">
+      <button onclick="loadAccounts()">Refresh</button>
+    </div>
+    <div id="flash"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="accountsBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const flash = document.getElementById('flash');
+    const body = document.getElementById('accountsBody');
+
+    function setFlash(message, type = 'success') {
+      flash.className = type;
+      flash.textContent = message;
+      setTimeout(() => { flash.textContent = ''; flash.className = ''; }, 2500);
+    }
+
+    function toDate(value) {
+      return new Date(value).toLocaleString();
+    }
+
+    async function loadAccounts() {
+      try {
+        const res = await fetch('/admin/accounts');
+        const data = await res.json();
+        body.innerHTML = data.map((row) => `
+          <tr>
+            <td>${row.id}</td>
+            <td>${row.username}</td>
+            <td>
+              <select id="role-${row.id}">
+                <option value="User" ${row.role === 'User' ? 'selected' : ''}>User</option>
+                <option value="Admin" ${row.role === 'Admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            </td>
+            <td>${toDate(row.created_at)}</td>
+            <td>
+              <button class="secondary" onclick="saveRole(${row.id}, '${row.username}')">Save</button>
+              <button class="danger" onclick="removeAccount(${row.id})">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        setFlash('Failed to load accounts', 'error');
+      }
+    }
+
+    async function saveRole(id, username) {
+      const role = document.getElementById(`role-${id}`).value;
+      try {
+        const res = await fetch(`/admin/accounts/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, role })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Update failed');
+        setFlash(data.message || 'Updated');
+        loadAccounts();
+      } catch (err) {
+        setFlash(err.message, 'error');
+      }
+    }
+
+    async function removeAccount(id) {
+      if (!confirm('Delete this account?')) return;
+      try {
+        const res = await fetch(`/admin/accounts/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Delete failed');
+        setFlash(data.message || 'Deleted');
+        loadAccounts();
+      } catch (err) {
+        setFlash(err.message, 'error');
+      }
+    }
+
+    loadAccounts();
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">TypeScript CRUD Admin</div>
+      <nav class="nav">
+        <a class="active" href="/adminDashboard.html">Dashboard</a>
+        <a href="/accounts.html">Accounts</a>
+        <a href="/AllRequestAdmin.html">Requests</a>
+      </nav>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <h3>Manage Accounts</h3>
+        <p class="muted">View, edit role, and remove user accounts.</p>
+        <a href="/accounts.html"><button>Open Accounts</button></a>
+      </article>
+
+      <article class="card">
+        <h3>Approve Requests</h3>
+        <p class="muted">Review all requests and update request status.</p>
+        <a href="/AllRequestAdmin.html"><button>Open Requests</button></a>
+      </article>
+
+      <article class="card">
+        <h3>API Modules</h3>
+        <p class="muted">Your backend modules are available at:</p>
+        <ul>
+          <li><code>/users</code></li>
+          <li><code>/departments</code></li>
+          <li><code>/employees</code></li>
+          <li><code>/requests</code></li>
+        </ul>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

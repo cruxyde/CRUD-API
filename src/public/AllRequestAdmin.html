@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Requests</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">All Requests</div>
+      <nav class="nav">
+        <a href="/adminDashboard.html">Dashboard</a>
+        <a href="/accounts.html">Accounts</a>
+        <a class="active" href="/AllRequestAdmin.html">Requests</a>
+      </nav>
+    </header>
+
+    <div class="toolbar">
+      <button onclick="loadRequests()">Refresh</button>
+      <select id="statusFilter" onchange="renderRows()">
+        <option value="">All status</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+    <div id="flash"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Employee</th>
+          <th>Department</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="requestBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const flash = document.getElementById('flash');
+    const body = document.getElementById('requestBody');
+    const statusFilter = document.getElementById('statusFilter');
+    let rows = [];
+
+    function setFlash(message, type = 'success') {
+      flash.className = type;
+      flash.textContent = message;
+      setTimeout(() => { flash.textContent = ''; flash.className = ''; }, 2500);
+    }
+
+    function toDate(value) {
+      return new Date(value).toLocaleString();
+    }
+
+    async function loadRequests() {
+      try {
+        const res = await fetch('/admin/requests');
+        rows = await res.json();
+        renderRows();
+      } catch (err) {
+        setFlash('Failed to load requests', 'error');
+      }
+    }
+
+    function renderRows() {
+      const filter = statusFilter.value;
+      const filtered = filter ? rows.filter((r) => r.status === filter) : rows;
+      body.innerHTML = filtered.map((row) => `
+        <tr>
+          <td>${row.id}</td>
+          <td>${row.type}</td>
+          <td>${row.employee ? `${row.employee.firstName} ${row.employee.lastName}` : '-'}</td>
+          <td>${row.department ? row.department.name : '-'}</td>
+          <td><span class="status ${row.status}">${row.status}</span></td>
+          <td>${toDate(row.created_at)}</td>
+          <td>
+            <select id="next-${row.id}">
+              <option value="pending" ${row.status === 'pending' ? 'selected' : ''}>pending</option>
+              <option value="approved" ${row.status === 'approved' ? 'selected' : ''}>approved</option>
+              <option value="rejected" ${row.status === 'rejected' ? 'selected' : ''}>rejected</option>
+            </select>
+            <button class="secondary" onclick="saveStatus(${row.id})">Save</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function saveStatus(id) {
+      const status = document.getElementById(`next-${id}`).value;
+      try {
+        const res = await fetch(`/admin/requests/${id}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Status update failed');
+        setFlash(data.message || 'Status updated');
+        loadRequests();
+      } catch (err) {
+        setFlash(err.message, 'error');
+      }
+    }
+
+    loadRequests();
+  </script>
+</body>
+</html>

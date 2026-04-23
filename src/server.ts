@@ -1,24 +1,31 @@
 // src/server.ts
 import express, { Application } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { errorHandler } from './_middleware/errorHandler';
 import { initialize } from './_helpers/db';
 import usersController from './users/users.controller';
 import departmentsController from './departments/departments.controller';
 import employeesController from './employees/employees.controller';
 import requestsController from './requests/requests.controller';
+import adminController from './admin/admin.controller';
 
 const app: Application = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.static(path.join(process.cwd(), 'src', 'public')));
 
 // API routes
 app.use('/users', usersController);
 app.use('/departments', departmentsController);
 app.use('/employees', employeesController);
 app.use('/requests', requestsController); 
+app.use('/admin', adminController);
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(process.cwd(), 'src', 'public', 'adminDashboard.html'));
+});
 
 // Global error handler (must be last)
 app.use(errorHandler);
